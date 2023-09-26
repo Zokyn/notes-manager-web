@@ -1,0 +1,6 @@
+<h1>{{ note.title_note }}</h1>
+<ul>
+    {% for body in note.body_set.all %}
+        <li>{{ body.body_text }}</li>
+    {% endfor %}
+</ul>
