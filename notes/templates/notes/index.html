@@ -1,8 +1,8 @@
-{% if latest_notes_list %}
+{% if latest_note_list %}
     <ul>
-    {% for note in latest_notes_list%}
+    {% for note in latest_note_list %}
         <li><a href="{% url 'note' note.id %}">
-            {{ note_title_note }}
+            {{ note.note_title }}
         </a></li>
     {% endfor %}
     </ul>
