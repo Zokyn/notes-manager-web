@@ -32,10 +32,10 @@ def note(request, note_id):
 def edit(request, note_id):
     note = get_object_or_404(Note, pk=note_id)
     try: 
-        body = note.body_set.get(pk=request.POST["body_id"])
+        print(request.POST["body_id"])
         context = {
             "note": note,
-            "body": body
+            "body": note.body_set.get(pk=request.POST["body_id"])
         }
     except (KeyError, Body.DoesNotExist):
         error = "Can't reach selected body. This note doesn't have this body linked"
