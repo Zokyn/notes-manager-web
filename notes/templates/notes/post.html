@@ -1,0 +1,19 @@
+<fieldset>
+    <legend>
+            <h1>{{ note.note_title }}<sub>ID: {{ note.id }}</sub></h1>
+    </legend>
+    {% if error_message %}
+        <p><strong>{{ error_message }}</strong></p>
+    {% endif %}
+    {% for body in note.body_set.all %}
+        <label>{{body.id}}</label>
+        <textarea name="body" disabled rows="10" cols="50">
+            {{body.body_text}}
+        </textarea>
+        <form action="{% url 'notes:edit' note.id %}" method="GET">
+            {% csrf_token %}
+            <input type="text" id="id" value="{{body.id}}" disabled hidden/>
+            <input type="submit" value="Edit"/>
+        </form>
+    {% endfor %}
+</fieldset>

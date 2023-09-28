@@ -1,8 +1,8 @@
-from django.http import HttpResponse, Http404, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
 from django.urls import reverse
-from .models import Note
+from .models import Note, Body
 
 # Create your views here.
 def index(request):
@@ -12,12 +12,53 @@ def index(request):
     }
     return render(request, "notes/index.html", context)
 
-def detail(request, note_id):
+def note(request, note_id):
     note = get_object_or_404(Note, pk=note_id)
-    return render(request, "notes/detail.html", {"note": note})
+    try: 
+        body_list = note.body_set.all()
+        context = {
+            "note": note,
+            "body_list": body_list
+        }
+    except (KeyError, Body.DoesNotExist):
+        context = {
+            "note": note,
+            "error_message": "There is no bodies on this note"
+        }
+        return render(request, "notes/note.html", context)
+    return render(request, "notes/note.html", context)
 
-def results(request, note_id):
-    return HttpResponse("You're looking at a body %s" % note_id)
+def edit(request, note_id):
+    note = get_object_or_404(Note, pk=note_id)
+    try: 
+        body = note.body_set.get(pk=request.POST["body_id"])
+        context = {
+            "note": note,
+            "body": body
+        }
+    except (KeyError, Body.DoesNotExist):
+        error = "This note doesn't have this body"
+        context = {
+            "note": note,
+            "error_message": error
+        }
+        return render(request, "notes/edit.html", context)
+    return render(request, 'notes:post', context)
+
+def post(request, note_id):
+    note = get_object_or_404(Note, pk=note_id)
+    body = get_object_or_404(Body, pk=request.GET["id"])
+    try: 
+        body.body_text = request.POST["body_text"]
+        body.save()
+    except (KeyError, Note.DoesNotExist):
+        context = {
+            "note": note,
+            "error_message": "Essa nota não existe"
+        }
+        # return render(request, "notes/edit.html", context)
+    context = { "note": note, "body": body }
+    return render(request, "notes/post.html", context)
 
 def vote(request, note_id):
     note = get_object_or_404(Note, pk=note_id)

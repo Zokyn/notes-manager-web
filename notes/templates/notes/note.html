@@ -1,0 +1,23 @@
+{% if note %}
+    <fieldset>
+        <legend><h1>{{note.note_title}}</h1></legend>
+    {% if error_message %}
+        <p><strong>{{ error_message }}</strong></p>
+    {% endif %}
+    <ul>
+    {% for body in body_list %}
+        <form action="{% url 'notes:post' note.id %}" method="GET"> 
+            <input type="text" name="id" id="id" value={{body.id}} hidden/>
+            <input type="submit" id="body_id" value="{{body.body_text}}"/>
+        </form>
+        {% comment %} <li>
+            <a href="{% url 'notes:post' note.id body.id  %}">
+            {{ body.body_text }}
+            </a>
+        </li> {% endcomment %}
+    {% endfor %}
+    </ul>
+    </fieldset>
+{% else %}
+    <p>No notes are available.</p>
+{% endif %}
