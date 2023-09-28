@@ -6,15 +6,14 @@
     {% endif %}
     <ul>
     {% for body in body_list %}
-        <form action="{% url 'notes:post' note.id %}" method="GET"> 
-            <input type="text" name="id" id="id" value={{body.id}} hidden/>
-            <input type="submit" id="body_id" value="{{body.body_text}}"/>
+        <form action="{% url 'notes:edit' note.id %}" method="POST">
+            {% csrf_token %}
+            <input type="text" id="body_id" value="{{body.id}}" disabled hidden/>
+            <textarea name="body" disabled rows="10" cols="50">
+                {{body.body_text}}
+            </textarea>
+            <input type="submit" value="Edit"/>
         </form>
-        {% comment %} <li>
-            <a href="{% url 'notes:post' note.id body.id  %}">
-            {{ body.body_text }}
-            </a>
-        </li> {% endcomment %}
     {% endfor %}
     </ul>
     </fieldset>

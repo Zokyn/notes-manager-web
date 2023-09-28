@@ -2,6 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
 from django.urls import reverse
+from django.contrib import messages
 from .models import Note, Body
 
 # Create your views here.
@@ -37,13 +38,10 @@ def edit(request, note_id):
             "body": body
         }
     except (KeyError, Body.DoesNotExist):
-        error = "This note doesn't have this body"
-        context = {
-            "note": note,
-            "error_message": error
-        }
-        return render(request, "notes/edit.html", context)
-    return render(request, 'notes:post', context)
+        error = "Can't reach selected body. This note doesn't have this body linked"
+        messages.error(request, error)
+        return redirect('notes:index')
+    return render(request, 'notes:edit', context)
 
 def post(request, note_id):
     note = get_object_or_404(Note, pk=note_id)

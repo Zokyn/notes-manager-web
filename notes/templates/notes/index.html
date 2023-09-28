@@ -1,9 +1,26 @@
 {% if latest_note_list %}
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
+            {{ message }}
+        </li> 
+        {% endfor %}
+    </ul>
+    {% endif %}
     <ul>
     {% for note in latest_note_list %}
         <li><a href="{% url 'notes:note' note.id %}">
             {{ note.note_title }}
-        </a></li>
+            </a>
+            <ul>
+                {% for body in note.body_set.all %}
+                    <li>
+                        {{ body.body_text }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </li>
     {% endfor %}
     </ul>
 {% else %}
