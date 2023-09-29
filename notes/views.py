@@ -32,16 +32,17 @@ def note(request, note_id):
 def edit(request, note_id):
     note = get_object_or_404(Note, pk=note_id)
     try: 
-        print(request.POST["body_id"])
         context = {
             "note": note,
             "body": note.body_set.get(pk=request.POST["body_id"])
         }
+        return render(request, 'notes/edit.html', context)
     except (KeyError, Body.DoesNotExist):
         error = "Can't reach selected body. This note doesn't have this body linked"
         messages.error(request, error)
-        return redirect('notes:index')
-    return render(request, 'notes:edit', context)
+        # return redirect('notes:index')
+    # return render(request, 'notes/index.html', {"latest_note_list": Note.objects.order_by("-pub_date")[:10]})
+    return redirect('notes:index')
 
 def post(request, note_id):
     note = get_object_or_404(Note, pk=note_id)
@@ -58,21 +59,21 @@ def post(request, note_id):
     context = { "note": note, "body": body }
     return render(request, "notes/post.html", context)
 
-def vote(request, note_id):
-    note = get_object_or_404(Note, pk=note_id)
-    try: 
-        selected_body = note.body_set.get(pk=request.POST["body"])
-    except (KeyError, Note.DoesNotExist):
-        return render(
-            request,
-            "notes/detail.html",
-            {
-                "note": note,
-                "error_message": "You didn't select a choice"
-            },
-        ) 
-    else: 
-        selected_body.upvotes += 1
-        selected_body.save()
+# def vote(request, note_id):
+#     note = get_object_or_404(Note, pk=note_id)
+#     try: 
+#         selected_body = note.body_set.get(pk=request.POST["body"])
+#     except (KeyError, Note.DoesNotExist):
+#         return render(
+#             request,
+#             "notes/detail.html",
+#             {
+#                 "note": note,
+#                 "error_message": "You didn't select a choice"
+#             },
+#         ) 
+#     else: 
+#         selected_body.upvotes += 1
+#         selected_body.save()
 
-    return HttpResponseRedirect(reverse("notes:body", args=((note.id,))))
+#     return HttpResponseRedirect(reverse("notes:body", args=((note.id,))))
