@@ -2,18 +2,16 @@
     <p><strong>{{ error_message }}</strong></p>
 {% endif %}
 {% if body %}
-<form action="{% url 'notes:post' note.id %}" method="post">
-    {% csrf_token %}
-    <fieldset>
-        <legend><h1>{{ note.note_title }}</h1></legend>
-            <div>
-                <input type="text" name="body_id" id="body_id" value="{{body.id}}"/>
-                <textarea name="body_text" id="body_text" rows="10" cols="50">
-                    {{ body.body_text}}
-                </textarea>
-            </div>
-            <input type="submit" value="Save">
-    </fieldset>
-</form>
+<fieldset>
+    <legend><h1>{{ note.note_title }}</h1></legend>
+    <form action="{% url 'notes:post' note.id %}" method="POST">
+        {% csrf_token %}
+        <input name="body_id" id="body_id" value="{{body.id}}" type="text"/>
+        <textarea name="text" id="text" rows="10" cols="50">
+            {{ body.body_text}}
+        </textarea>
+        <input type="submit" value="Save">
+    </form>
+</fieldset>
 {% endif %}
 <a href="{% url 'notes:index' %}">Home</a>

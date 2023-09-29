@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpRequest
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
 from django.urls import reverse
@@ -29,51 +29,34 @@ def note(request, note_id):
         return render(request, "notes/note.html", context)
     return render(request, "notes/note.html", context)
 
-def edit(request, note_id):
+def edit(request, note_id, body_id):
     note = get_object_or_404(Note, pk=note_id)
     try: 
+        body = get_object_or_404(Body, pk=body_id)
         context = {
             "note": note,
-            "body": note.body_set.get(pk=request.POST["body_id"])
+            "body": body
         }
         return render(request, 'notes/edit.html', context)
     except (KeyError, Body.DoesNotExist):
         error = "Can't reach selected body. This note doesn't have this body linked"
         messages.error(request, error)
-        # return redirect('notes:index')
-    # return render(request, 'notes/index.html', {"latest_note_list": Note.objects.order_by("-pub_date")[:10]})
     return redirect('notes:index')
 
-def post(request, note_id):
+def post(request : HttpRequest, note_id):
     note = get_object_or_404(Note, pk=note_id)
-    body = get_object_or_404(Body, pk=request.GET["id"])
-    try: 
-        body.body_text = request.POST["body_text"]
-        body.save()
-    except (KeyError, Note.DoesNotExist):
-        context = {
-            "note": note,
-            "error_message": "Essa nota não existe"
-        }
-        # return render(request, "notes/edit.html", context)
-    context = { "note": note, "body": body }
-    return render(request, "notes/post.html", context)
-
-# def vote(request, note_id):
-#     note = get_object_or_404(Note, pk=note_id)
-#     try: 
-#         selected_body = note.body_set.get(pk=request.POST["body"])
-#     except (KeyError, Note.DoesNotExist):
-#         return render(
-#             request,
-#             "notes/detail.html",
-#             {
-#                 "note": note,
-#                 "error_message": "You didn't select a choice"
-#             },
-#         ) 
-#     else: 
-#         selected_body.upvotes += 1
-#         selected_body.save()
-
-#     return HttpResponseRedirect(reverse("notes:body", args=((note.id,))))
+    if request.method == "POST":
+        body = get_object_or_404(Body, pk=request.POST["body_id"])
+        try: 
+            body.body_text = request.POST.get("text", '')
+            body.save()
+        except (KeyError, Note.DoesNotExist):
+            context = {
+                "note": note,
+                "error_message": "Essa nota não existe"
+            }
+            return render(request, "notes:note", context)
+    else:
+        error = "Request doens't have method post"
+        messages.error(request, error)
+    return redirect("notes:index")
