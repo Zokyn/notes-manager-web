@@ -16,9 +16,16 @@
             <ul>
                 {% for body in note.body_set.all %}
                     <li>
+                        <textarea disabled rows="10" cols="50">
                         {{ body.body_text }}
+                        </textarea>
                     </li>
                 {% endfor %}
+                <li>
+                    <a href="{% url 'notes:new' note.id %}">
+                        <button>New</button>
+                    </a>
+                </li>
             </ul>
         </li>
     {% endfor %}

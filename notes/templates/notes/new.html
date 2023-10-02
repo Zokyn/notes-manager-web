@@ -1,0 +1,12 @@
+{% if error_message %}
+    <p><strong>{{ error_message }}</strong></p>
+{% endif %}
+<fieldset>
+    <legend><h1>{{ note.note_title }}</h1></legend>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Create">
+    </form>
+</fieldset>
+<a href="{% url 'notes:index' %}">Home</a>
