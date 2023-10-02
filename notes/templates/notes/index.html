@@ -14,13 +14,18 @@
             {{ note.note_title }}
             </a>
             <ul>
-                {% for body in note.body_set.all %}
+                {% for body in note.body_set.all|slice:":3" %}
                     <li>
                         <textarea disabled rows="10" cols="50">
                         {{ body.body_text }}
                         </textarea>
                     </li>
                 {% endfor %}
+                {% if note.body_set.all|length > 3%}
+                    <li>
+                        <a href="{% url 'notes:note' note.id %}">See more itens</a>
+                    </li>
+                {% endif %}
                 <li>
                     <a href="{% url 'notes:new' note.id %}">
                         <button>New</button>
