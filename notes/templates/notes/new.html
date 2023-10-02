@@ -1,14 +1,12 @@
 {% if error_message %}
     <p><strong>{{ error_message }}</strong></p>
 {% endif %}
-{% if body %}
 <fieldset>
     <legend><h1>{{ note.note_title }}</h1></legend>
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Save">
+        <input type="submit" value="Create">
     </form>
 </fieldset>
-{% endif %}
 <a href="{% url 'notes:index' %}">Home</a>

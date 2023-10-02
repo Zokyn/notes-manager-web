@@ -5,7 +5,7 @@
         <p><strong>{{ error_message }}</strong></p>
     {% endif %}
     <ul>
-    {% for body in body_list %}
+        {% for body in body_list %}
         <form action="{% url 'notes:edit' note.id body.id %}" method="POST">
             {% csrf_token %}
             <textarea name="body" disabled rows="10" cols="50">
@@ -13,7 +13,10 @@
             </textarea>
             <input type="submit" value="Edit"/>
         </form> 
-    {% endfor %}
+        {% endfor %}
+        <a href="{% url 'notes:new' note.id %}">
+            <button>Create Note</button>
+        </a>
     </ul>
     </fieldset>
 {% else %}
